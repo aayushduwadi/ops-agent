@@ -15,7 +15,6 @@
 package apps
 
 import (
-	"fmt"
 	"regexp"
 	"strings"
 
@@ -42,9 +41,9 @@ func (p MetricsProcessorExcludeMetrics) Processors() []otel.Component {
 		for _, g := range strings.Split(glob, "*") {
 			literals = append(literals, regexp.QuoteMeta(g))
 		}
-		// $ needs to be escaped because reasons.
-		// https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/metricstransformprocessor#rename-multiple-metrics-using-substitution
-		metricNames = append(metricNames, fmt.Sprintf(`^%s$$`, strings.Join(literals, `.*`)))
+		// All filter regexes are automatically anchored.
+		// https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/internal/coreinternal/processor/filterset/regexp/regexpfilterset.go#L79
+		metricNames = append(metricNames, strings.Join(literals, `.*`))
 	}
 	return []otel.Component{otel.MetricsFilter(
 		"exclude",
