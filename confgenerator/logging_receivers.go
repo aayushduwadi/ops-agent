@@ -65,7 +65,7 @@ func (r LoggingReceiverFilesMixin) Components(tag string) []fluentbit.Component 
 		// TODO: Escaping?
 		"Path":           strings.Join(r.IncludePaths, ","),
 		"DB":             DBPath(tag),
-		"Read_from_Head": "True",
+		"Read_from_Head": "False",
 		// Set the chunk limit conservatively to avoid exceeding the recommended chunk size of 5MB per write request.
 		"Buffer_Chunk_Size": "512k",
 		// Set the max size a bit larger to accommodate for long log lines.
@@ -87,6 +87,8 @@ func (r LoggingReceiverFilesMixin) Components(tag string) []fluentbit.Component 
 		// When the input plugin hits "mem_buf_limit", because we have enabled filesystem storage type, mem_buf_limit acts
 		// as a hint to set "how much data can be up in memory", once the limit is reached it continues writing to disk.
 		"Mem_Buf_Limit": "10M",
+
+		"DB.sync": "Off",
 	}
 	if len(r.ExcludePaths) > 0 {
 		// TODO: Escaping?
